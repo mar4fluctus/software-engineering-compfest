@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEAPEDIA - Dashboard Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <nav class="bg-gray-900 text-white shadow-md px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold tracking-wide">SEAPEDIA Portal</h1>
+        <div class="flex items-center space-x-4">
+            <span class="bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded-full text-white" id="display-role">User</span>
+            <button onclick="window.location.href='index.html'" class="text-sm bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded-lg text-white font-medium transition">
+                Logout
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 py-10">
+        
+        <div id="seller-section" class="hidden bg-white p-6 rounded-2xl shadow-md border border-gray-100 mb-8">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">🏪 Seller Panel: Tambah Produk Baru</h3>
+            <p class="text-gray-500 text-sm mb-6">Masukkan detail produk jualanmu agar langsung tampil di katalog utama SEAPEDIA.</p>
+            
+            <form id="addProductForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Produk</label>
+                        <input type="text" id="prodName" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Harga (Rp)</label>
+                        <input type="number" id="prodPrice" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Deskripsi Singkat</label>
+                    <textarea id="prodDesc" rows="2" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition shadow cursor-pointer">
+                    + Pasang Produk di Toko
+                </button>
+            </form>
+        </div>
+
+        <div id="buyer-section" class="hidden space-y-6">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-2xl shadow-md text-white flex justify-between items-center">
+                <div>
+                    <p class="text-xs text-indigo-200 uppercase font-bold tracking-wider">Total Saldo Seacash</p>
+                    <h3 class="text-3xl font-black mt-1">Rp <span id="wallet-balance">1.500.000</span></h3>
+                </div>
+                <span class="text-4xl">💳</span>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">🛍️ Keranjang Belanja Kamu</h3>
+                
+                <div id="cart-list" class="space-y-3 divide-y divide-gray-100">
+                    <p class="text-sm text-gray-400 py-4 text-center">Keranjang belanja kamu kosong.</p>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-dashed border-gray-200">
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Punya Kode Voucher? (Gunakan: SEAPEDIA10)</label>
+                    <div class="flex space-x-2">
+                        <input type="text" id="voucher-code" placeholder="Masukkan kode promo" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-1">
+                        <button onclick="applyVoucher()" class="bg-gray-800 hover:bg-gray-900 text-white text-xs font-semibold px-4 py-2 rounded-lg transition cursor-pointer">Gunakan</button>
+                    </div>
+                    <p id="voucher-status" class="text-xs mt-1 font-medium hidden"></p>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Pilih Metode Pengiriman</label>
+                    <select id="shipping-method" onchange="loadBuyerCart()" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <option value="15000">Regular (Rp 15.000)</option>
+                        <option value="25000">Next Day (Rp 25.000)</option>
+                        <option value="40000">Instant (Rp 40.000)</option>
+                    </select>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-gray-200 space-y-2 text-sm text-gray-600">
+                    <div class="flex justify-between">
+                        <span>Subtotal Produk:</span>
+                        <span>Rp <span id="summary-subtotal">0</span></span>
+                    </div>
+                    <div class="flex justify-between text-red-600">
+                        <span>Potongan Diskon:</span>
+                        <span>-Rp <span id="summary-discount">0</span></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Ongkos Kirim:</span>
+                        <span>Rp <span id="summary-shipping">0</span></span>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-400">
+                        <span>PPN (12% dari Subtotal setelah diskon):</span>
+                        <span>Rp <span id="summary-tax">0</span></span>
+                    </div>
+                    <div class="flex justify-between items-center border-t border-gray-200 pt-3 text-base font-bold text-gray-900">
+                        <div>
+                            <p>Total Pembayaran:</p>
+                        </div>
+                        <p class="text-xl text-indigo-600">Rp <span id="cart-total">0</span></p>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button onclick="checkoutCart()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-3 rounded-xl shadow transition cursor-pointer text-center">
+                        Konfirmasi & Checkout Sekarang
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="driver-section" class="hidden bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">🛵 Driver Portal: Pengiriman Pesanan</h3>
+            <p class="text-gray-500 text-sm mb-6">Pantau dan ubah status pengiriman paket pembeli secara langsung.</p>
+            
+            <div class="border border-gray-100 rounded-xl p-4 bg-gray-50 space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2.5 py-1 rounded-md" id="delivery-status">Menunggu Kurir</span>
+                    <span class="text-xs text-gray-400 font-mono">#TRX-992182</span>
+                </div>
+                <div class="text-sm">
+                    <p class="font-semibold text-gray-800">Tujuan Pengiriman:</p>
+                    <p class="text-gray-600 text-xs">Gedung Fasilkom UI, Kampus Depok, Jawa Barat.</p>
+                </div>
+                <button onclick="updateDeliveryStatus()" id="btn-delivery" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg text-sm transition cursor-pointer">
+                    Ambil & Antar Pesanan
+                </button>
+            </div>
+        </div>
+
+        <div id="admin-section" class="hidden space-y-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">⚡ Admin Center: Platform Analytics</h3>
+            <p class="text-gray-500 text-sm mb-6">Pantau perputaran uang dan aktivitas transaksi di dalam ekosistem SEAPEDIA secara berkala.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Gross Platform Revenue</p>
+                        <h4 class="text-2xl font-black text-gray-900 mt-1">Rp <span id="admin-revenue">0</span></h4>
+                    </div>
+                    <span class="text-3xl p-3 bg-green-50 rounded-xl">📈</span>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Security Hardening</p>
+                        <h4 class="text-lg font-bold text-green-600 mt-1 flex items-center">
+                            <span class="w-2.5 h-2.5 bg-green-500 rounded-full inline-block mr-2 animate-pulse"></span>
+                            SQLi & XSS Protected
+                        </h4>
+                    </div>
+                    <span class="text-3xl p-3 bg-indigo-50 rounded-xl">🛡️</span>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+                <h4 class="font-bold text-sm text-gray-800 mb-3">System Log Tracking</h4>
+                <div class="text-xs font-mono bg-gray-900 text-gray-300 p-4 rounded-xl space-y-1 overflow-x-auto">
+                    <p class="text-green-400">[OK] Security Firewall initialized successfully.</p>
+                    <p class="text-blue-400">[INFO] Database connection status: Secure & Stable.</p>
+                    <p id="admin-log-trx" class="text-gray-400">[IDLE] Awaiting incoming checkout transactions...</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+   <script>
+        // Variabel pembantu pelacak diskon
+        let discountMultiplier = 1.0; 
+
+        document.addEventListener("DOMContentLoaded", function() {
+    const activeRole = localStorage.getItem("seapedia_active_role") || "buyer";
+    document.getElementById("display-role").textContent = activeRole;
+
+    const sellerSection = document.getElementById("seller-section");
+    const buyerSection = document.getElementById("buyer-section");
+    const driverSection = document.getElementById("driver-section");
+    const adminSection = document.getElementById("admin-section"); // <-- INI YANG TADI KURANG
+
+    // Mengatur hak akses panel berdasarkan akun yang masuk
+    if (activeRole === "seller") {
+        sellerSection.classList.remove("hidden");
+    } else if (activeRole === "buyer") {
+        buyerSection.classList.remove("hidden");
+        loadBuyerCart();
+    } else if (activeRole === "driver") {
+        driverSection.classList.remove("hidden");
+        loadDriverDeliveryStatus();
+    } else if (activeRole === "admin") {
+        adminSection.classList.remove("hidden"); // <-- BIAR NGGAK EMBED KELUAR LAGU LAIN
+        loadAdminStats(); 
+    }
+
+            // Handler Tambah Produk Seller (Level 2)
+            const addProductForm = document.getElementById("addProductForm");
+            if (addProductForm) {
+                addProductForm.addEventListener("submit", function(e) {
+                    e.preventDefault();
+                    const name = document.getElementById("prodName").value.trim();
+                    const price = document.getElementById("prodPrice").value.trim();
+                    const desc = document.getElementById("prodDesc").value.trim();
+                    if(!name || !price || !desc) return;
+
+                    let currentProducts = JSON.parse(localStorage.getItem("seapedia_custom_products")) || [];
+                    currentProducts.push({ name, price, desc });
+                    localStorage.setItem("seapedia_custom_products", JSON.stringify(currentProducts));
+                    alert("Produkmu berhasil ditambahkan ke katalog utama!");
+                    addProductForm.reset();
+                });
+            }
+        });
+
+        // Muat Data Belanjaan Buyer dengan kalkulasi PPN 12% & Ongkir (Level 3 & 4)
+        function loadBuyerCart() {
+            const cartList = document.getElementById("cart-list");
+            const cartData = JSON.parse(localStorage.getItem("seapedia_cart")) || [];
+            
+            if(cartData.length === 0) {
+                cartList.innerHTML = `<p class="text-sm text-gray-400 py-4 text-center">Keranjang belanja kamu kosong.</p>`;
+                document.getElementById("summary-subtotal").textContent = "0";
+                document.getElementById("summary-discount").textContent = "0";
+                document.getElementById("summary-shipping").textContent = "0";
+                document.getElementById("summary-tax").textContent = "0";
+                document.getElementById("cart-total").textContent = "0";
+                return;
+            }
+
+            cartList.innerHTML = "";
+            let subtotal = 0;
+
+            cartData.forEach((item) => {
+                subtotal += item.price;
+                const row = document.createElement("div");
+                row.className = "flex justify-between items-center py-3 text-sm text-gray-700";
+                row.innerHTML = `<div><p class="font-semibold text-gray-900">${item.name}</p><p class="text-xs text-gray-400">Kuantitas: 1x</p></div><p class="font-bold text-gray-800">Rp ${item.price.toLocaleString("id-ID")}</p>`;
+                cartList.appendChild(row);
+            });
+
+            // 1. Hitung Potongan Diskon (Jika Voucher SEAPEDIA10 Aktif)
+            let discount = 0;
+            if (discountMultiplier === 0.9) {
+                discount = Math.round(subtotal * 0.1); // Potongan 10%
+            }
+            let totalSetelahDiskon = subtotal - discount;
+
+            // 2. Ambil nilai Ongkos Kirim dari Dropdown Pilihan
+            const shippingCost = parseInt(document.getElementById("shipping-method").value) || 0;
+
+            // 3. Hitung PPN 12% sesuai regulasi lembar tugas COMPFEST
+            let tax = Math.round(totalSetelahDiskon * 0.12);
+
+            // 4. Hitung Total Akhir yang Harus Dibayar
+            let finalTotal = totalSetelahDiskon + shippingCost + tax;
+
+            // Masukkan data angka ke elemen visual struk belanja
+            document.getElementById("summary-subtotal").textContent = subtotal.toLocaleString("id-ID");
+            document.getElementById("summary-discount").textContent = discount.toLocaleString("id-ID");
+            document.getElementById("summary-shipping").textContent = shippingCost.toLocaleString("id-ID");
+            document.getElementById("summary-tax").textContent = tax.toLocaleString("id-ID");
+            document.getElementById("cart-total").textContent = finalTotal.toLocaleString("id-ID");
+            
+            // Simpan nilai final ke atribut sementara agar bisa dibaca saat checkout
+            document.getElementById("cart-total").dataset.grandTotal = finalTotal;
+        }
+
+        // Checkout & Kirim Paket ke Sistem Kas Utama Admin
+        function checkoutCart() {
+            const cartData = JSON.parse(localStorage.getItem("seapedia_cart")) || [];
+            if(cartData.length === 0) {
+                alert("Keranjang kamu masih kosong!");
+                return;
+            }
+
+            // Ambil total tagihan akhir dari data hitungan nota
+            const finalTotal = parseInt(document.getElementById("cart-total").dataset.grandTotal) || 0;
+            let balance = 1500000; // Simulasi saldo Seacash bawaan awal
+
+            if(balance < finalTotal) {
+                alert("Saldo Seacash kamu tidak mencukupi untuk membayar tagihan termasuk PPN & Ongkir!");
+                return;
+            }
+
+            alert(`Pembayaran Sukses! Total Rp ${finalTotal.toLocaleString("id-ID")} (Termasuk PPN 12% & Ongkir) berhasil dipotong dari Seacash.`);
+            
+            // Masukkan data pendapatan bersih ke kas Admin
+            let currentRevenue = parseInt(localStorage.getItem("seapedia_total_revenue")) || 0;
+            localStorage.setItem("seapedia_total_revenue", currentRevenue + finalTotal);
+
+            // Set status untuk diambil alih oleh kurir Driver
+            localStorage.setItem("seapedia_delivery_status", "Sedang Diantar");
+            localStorage.removeItem("seapedia_cart");
+            
+            // Segarkan tampilan halaman
+            loadBuyerCart();
+        }
+        
+        // Fitur Klaim Voucher Promo (Level 4)
+        function applyVoucher() {
+            const codeInput = document.getElementById("voucher-code").value.trim().toUpperCase();
+            const statusText = document.getElementById("voucher-status");
+            
+            statusText.classList.remove("hidden", "text-red-600", "text-green-600");
+
+            if (codeInput === "SEAPEDIA10") {
+                discountMultiplier = 0.9; // Diskon potongan harga 10%
+                statusText.textContent = "Voucher Berhasil Digunakan! Diskon 10% telah diterapkan.";
+                statusText.classList.add("text-green-600");
+                loadBuyerCart(); // Hitung ulang total belanjaan
+            } else {
+                discountMultiplier = 1.0;
+                statusText.textContent = "Kode voucher tidak valid atau kedaluwarsa.";
+                statusText.classList.add("text-red-600");
+                loadBuyerCart();
+            }
+        }
+
+        // Checkout & Kirim Paket ke Sistem Driver
+        function checkoutCart() {
+            const cartData = JSON.parse(localStorage.getItem("seapedia_cart")) || [];
+            if(cartData.length === 0) {
+                alert("Keranjang kamu masih kosong!");
+                return;
+            }
+
+            let total = 0;
+            cartData.forEach(item => total += item.price);
+            let finalTotal = Math.round(total * discountMultiplier);
+
+            let balance = 1500000;
+            if(balance < finalTotal) {
+                alert("Saldo Seacash kamu tidak mencukupi!");
+                return;
+            }
+
+            alert(`Pembayaran Rp ${finalTotal.toLocaleString("id-ID")} Berhasil! Menghubungkan ke Driver untuk pengiriman.`);
+            
+            // Atur status pengiriman ke LocalStorage agar dibaca Driver
+            localStorage.setItem("seapedia_delivery_status", "Sedang Diantar");
+            localStorage.removeItem("seapedia_cart");
+            loadBuyerCart();
+        }
+
+        // Logika Pengiriman oleh Driver (Level 5)
+        function loadDriverDeliveryStatus() {
+            const currentStatus = localStorage.getItem("seapedia_delivery_status") || "Menunggu Kurir";
+            const statusLabel = document.getElementById("delivery-status");
+            const actionBtn = document.getElementById("btn-delivery");
+
+            statusLabel.textContent = currentStatus;
+
+            if (currentStatus === "Sedang Diantar") {
+                statusLabel.className = "text-xs font-bold bg-blue-100 text-blue-800 px-2.5 py-1 rounded-md";
+                actionBtn.textContent = "Selesaikan Pengantaran (Selesai)";
+                actionBtn.className = "w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg text-sm transition cursor-pointer";
+            } else if (currentStatus === "Paket Diterima") {
+                statusLabel.className = "text-xs font-bold bg-green-100 text-green-800 px-2.5 py-1 rounded-md";
+                actionBtn.textContent = "Semua Pengiriman Selesai";
+                actionBtn.disabled = true;
+                actionBtn.className = "w-full bg-gray-300 text-gray-500 font-semibold py-2 rounded-lg text-sm transition cursor-not-allowed";
+            }
+        }
+
+        function updateDeliveryStatus() {
+            const currentStatus = localStorage.getItem("seapedia_delivery_status") || "Menunggu Kurir";
+
+            if (currentStatus === "Menunggu Kurir" || currentStatus === "Sedang Diantar") {
+                if (currentStatus === "Menunggu Kurir") {
+                    localStorage.setItem("seapedia_delivery_status", "Sedang Diantar");
+                } else {
+                    localStorage.setItem("seapedia_delivery_status", "Paket Diterima");
+                    alert("Terima kasih Kurir, status barang telah dikonfirmasi sudah sampai ke tangan pembeli!");
+                }
+                loadDriverDeliveryStatus();
+            }
+        }
+    </script>
+</body>
+</html>
