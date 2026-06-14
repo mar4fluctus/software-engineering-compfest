@@ -5,7 +5,7 @@ SEAPEDIA adalah sebuah platform simulasi e-commerce multi-role terintegrasi yang
 
 ## 🔗 Live Demo
 Aplikasi ini telah dideploy secara publik dan dapat diuji coba secara langsung melalui tautan berikut:
-👉 **[MASUKKAN_LINK_DEPLOYMENT_KAMU_DI_SINI]** (Contoh: https://username.github.io/seapedia)
+👉 https://github.com/mar4fluctus/software-engineering-compfest.git 
 
 ---
 
@@ -30,7 +30,7 @@ Aplikasi ini telah menyelesaikan seluruh rangkaian tantangan dari **Level 1 hing
   * *Pajak PPN 12%* sesuai dengan regulasi terbaru yang dihitung otomatis setelah potongan harga.
 
 ### 💸 Level 4: Discounts and Order Processing
-* **Sistem Voucher Promo:** Fitur klaim kode promo global (Contoh: `SEAPEDIA10`) yang otomatis memotong subtotal belanjaan sebesar 10% sebelum dikenakan pajak.
+* **Sistem Voucher Promo:** Fitur klaim kode promo global (`SEAPEDIA10`) yang otomatis memotong subtotal belanjaan sebesar 10% sebelum dikenakan pajak.
 * **Order State Tracking:** Mengubah status pesanan dari keranjang menjadi *Sedang Dikemas* dan diteruskan ke sistem pengiriman setelah pembayaran sukses.
 
 ### 🛵 Level 5: Delivery and Driver Workflow
