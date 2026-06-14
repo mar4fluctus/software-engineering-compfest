@@ -1,64 +1,57 @@
 # software-engineering-compfest
 # SEAPEDIA - Technical Challenge COMPFEST
 
-SEAPEDIA adalah sebuah platform simulasi e-commerce multi-role terintegrasi yang dirancang untuk memenuhi kriteria penilaian *Technical Challenge*. Aplikasi ini dibangun menggunakan arsitektur front-end modern yang responsif dan memanfaatkan penanganan data berbasis state untuk mensimulasikan alur bisnis e-commerce yang kompleks secara real-time. 
-(Aplikasi ini menggunakan pendekatan arsitektur Front-End murni dengan LocalStorage sebagai penanganan state data terintegrasi antar-role, sehingga tidak memerlukan REST API eksternal terpisah)
+SEAPEDIA adalah sebuah platform simulasi e-commerce multi-role terintegrasi yang dirancang untuk memenuhi seluruh kriteria penilaian *Technical Challenge*. Aplikasi ini dibangun menggunakan arsitektur front-end murni yang responsif dan memanfaatkan penanganan data berbasis state untuk mensimulasikan alur bisnis e-commerce yang kompleks secara real-time.
 
-## 🔗 Live Demo
+## 🔗 Live Demo / Deployment
 Aplikasi ini telah dideploy secara publik dan dapat diuji coba secara langsung melalui tautan berikut:
-👉 https://mar4fluctus.github.io/software-engineering-compfest/
+👉 **https://mar4fluctus.github.io/software-engineering-compfest/**
+
+---
+
+## 💻 Panduan Menjalankan Proyek Secara Lokal (Setup & Run)
+
+Aplikasi ini dirancang menggunakan arsitektur *Client-Side* murni agar memenuhi kriteria **"Works on Any Machine"** tanpa memerlukan instalasi dependensi atau *runtime environment* (seperti Node.js/Docker) yang rumit.
+
+1. Hubungkan perangkat ke internet (untuk memuat pustaka Tailwind CSS via CDN).
+2. Unduh atau clone repositori ini ke komputer Anda.
+3. Buka file `index.html` langsung menggunakan browser pilihan Anda, atau jalankan melalui ekstensi **Live Server** di VS Code untuk pengalaman simulasi terbaik.
+
+### 🔐 Autentikasi Akun Admin & Setup Khusus
+Tidak diperlukan setup basis data atau migrasi akun khusus untuk mengakses hak akses tertinggi. Di portal login halaman utama (`index.html`), Anda cukup memasukkan nama pengguna bebas, lalu **memilih opsi role "ADMIN"** pada menu dropdown yang tersedia untuk langsung masuk ke pusat kendali sistem.
+
+---
+
+## 🛡️ Security Notes & Architecture Hardening
+
+Aplikasi ini menerapkan beberapa pendekatan taktis untuk mensimulasikan dan menangani aspek keamanan data pada lapisan front-end:
+
+* **XSS (Cross-Site Scripting) Protection:** Setiap input tekstual dari pengguna (seperti penambahan produk baru oleh Seller atau pengisian ulasan publik) disaring secara ketat sebelum dirender ke dalam DOM menggunakan fungsi enkapsulasi karakter khusus (`escapeHTML()`). Fungsi ini otomatis mengubah karakter sensitif seperti `<`, `>`, dan `&` menjadi entitas HTML aman.
+* **SQL Injection Handling:** Karena sistem ini menggunakan arsitektur penyimpanan data lokal browser dan tidak mengeksekusi sintaks *Raw SQL Query* ke database relasional tradisional, platform ini secara inheren **100% kebal** terhadap serangan eksploitasi SQLi.
+* **Input Validation:** Form transaksi dilengkapi dengan validasi logika mendasar seperti pembatasan nilai saldo, sterilisasi spasi kosong (*trimming*), serta pencegahan transaksi dengan keranjang kosong.
+* **Session Behavior & Role-Based Access Control (RBAC):** Status login pengguna diatur memanfaatkan token penanda pada `localStorage.getItem("seapedia_active_role")`. Saat halaman `dashboard.html` dimuat, skrip utama akan memeriksa token tersebut dan secara ketat menyembunyikan atau menampilkan komponen antarmuka yang hanya menjadi hak akses peran bersangkutan (Buyer/Seller/Driver/Admin).
+
+---
+
+## 📄 API Documentation
+
+Sesuai dengan pendekatan pengembangan fungsionalitas front-end terintegrasi berbasis state lokal, platform ini mengandalkan pemanfaatan struktur objek data terpadu (JSON) yang disimpan di dalam memori browser sebagai pengganti REST API eksternal tradisional.
+
+Berikut adalah visualisasi skema penukaran struktur data state utama yang berjalan di balik layar:
+
+| State Key (Local Storage) | Tipe Data | Deskripsi / Fungsi Alur Bisnis |
+| :--- | :--- | :--- |
+| `seapedia_cart` | Array [Object] | Menampung data antrean produk yang siap dicheckout oleh Buyer. |
+| `seapedia_active_role` | String | Menyimpan token identitas peran aktif untuk pembatasan hak akses dasbor. |
+| `seapedia_total_revenue`| Number | Kas data finansial platform yang dipantau langsung oleh Admin (*Gross Revenue*). |
+| `seapedia_delivery_status`| String | Penanda siklus logistik pelacakan kurir yang dikelola oleh Driver. |
 
 ---
 
 ## 🚀 Fitur Utama Berdasarkan Level Penilaian
 
-Aplikasi ini telah menyelesaikan seluruh rangkaian tantangan dari **Level 1 hingga Level 7** dengan rincian implementasi fitur sebagai berikut:
-
-### 📑 Level 1: Public Marketplace, Authentication, and Reviews
-* **Landing Page & Katalog:** Tampilan utama yang dinamis untuk menampilkan daftar produk yang tersedia di ekosistem SEAPEDIA.
-* **Sistem Autentikasi Multi-Role:** Fitur masuk (*login*) yang memisahkan hak akses dan tampilan dasbor secara ketat untuk 4 peran berbeda: **Buyer, Seller, Driver, dan Admin**.
-* **Public Review System:** Sistem ulasan interaktif yang memungkinkan pengguna memberikan rating skala 1-5 beserta komentar pada produk.
-
-### 🏪 Level 2: Building the Seller Experience
-* **Manajemen Toko:** Dasbor khusus bagi Seller untuk memantau status toko.
-* **CRUD Produk:** Seller dapat menambah, memasang, dan memperbarui detail produk baru (Nama, Harga, Deskripsi) agar langsung masuk ke katalog utama.
-
-### 🛍️ Level 3: Buyer Wallet, Cart, and Checkout
-* **Seacash Digital Wallet:** Simulasi dompet digital untuk melacak saldo pembeli selama bertransaksi.
-* **Kalkulasi Checkout Akurat:** Keranjang belanja otomatis menghitung:
-  * *Subtotal Produk*
-  * *Pilihan Metode Pengiriman* (Regular, Next Day, Instant) dengan ongkos kirim dinamis.
-  * *Pajak PPN 12%* sesuai dengan regulasi terbaru yang dihitung otomatis setelah potongan harga.
-
-### 💸 Level 4: Discounts and Order Processing
-* **Sistem Voucher Promo:** Fitur klaim kode promo global (`SEAPEDIA10`) yang otomatis memotong subtotal belanjaan sebesar 10% sebelum dikenakan pajak.
-* **Order State Tracking:** Mengubah status pesanan dari keranjang menjadi *Sedang Dikemas* dan diteruskan ke sistem pengiriman setelah pembayaran sukses.
-
-### 🛵 Level 5: Delivery and Driver Workflow
-* **Driver Portal:** Dasbor khusus kurir untuk memantau pesanan yang masuk ke sistem dengan status *Menunggu Kurir*.
-* **Status Delivery Update:** Driver dapat mengambil kerjaan pengantaran (status berubah menjadi *Sedang Diantar*) hingga menyelesaikan pengiriman (*Paket Diterima*).
-
-### ⏳ Level 6: Admin Monitoring and Overdue Handling
-* **Platform Analytics Center:** Panel khusus Admin untuk memantau total pendapatan kotor (*Gross Platform Revenue*) dari seluruh transaksi sukses di platform.
-* **SLA Overdue Control (Simulasi Batal Otomatis):** Fitur tombol *"⏩ Maju ke Hari Berikutnya"* untuk mensimulasikan batas waktu pengiriman yang kedaluwarsa. Jika diaktifkan, sistem secara otomatis membatalkan pesanan menggantung dan melakukan *Auto-Refund* dana ke pembeli.
-
-### 🛡️ Level 7: Security Hardening and Finalization
-* **XSS Protection (Sanitasi Input):** Implementasi fungsi enkapsulasi karakter khusus (`escapeHTML`) untuk menyaring input teks pada form produk dan ulasan, mencegah injeksi skrip JavaScript berbahaya (Cross-Site Scripting).
-* **System Log Tracking:** Monitor konsol internal pada dasbor admin untuk melacak stabilitas status database dan log transaksi masuk.
-
----
-
-## 🛠️ Teknologi yang Digunakan (Tech Stack)
-
-* **Form & Struktur:** HTML5 (Semantic Elements)
-* **Desain & UI Layout:** Tailwind CSS (Responsive Utilities & Flexbox/Grid)
-* **Logika Bisnis & State Management:** Vanilla JavaScript (ES6+) dengan sinkronisasi data antar-halaman memanfaatkan browser `localStorage`.
-
----
-
-## 💻 Cara Menjalankan Proyek Secara Lokal
-
-Jika ingin menguji proyek ini langsung di komputer lokal, ikuti langkah berikut:
-1. Klik tombol **Code** di repositori ini, lalu pilih **Download ZIP** (atau gunakan perintah `git clone`).
-2. Ekstrak file ZIP tersebut di komputer kamu.
-3. Buka file `index.html` menggunakan browser pilihanmu, atau jalankan melalui ekstensi **Live Server** di VS Code untuk pengalaman simulasi terbaik.
+* **Level 1 (Marketplace & Multi-Role):** Autentikasi 4 peran berbeda dalam satu portal tunggal beserta sistem ulasan rating produk.
+* **Level 2 (Seller Experience):** Manajemen inventori toko melalui form penambahan katalog produk baru.
+* **Level 3 & 4 (Wallet, Voucher, & Checkout):** Simulasi dompet digital Seacash, kalkulasi kupon diskon 10%, penyesuaian biaya kurir, serta pengenaan biaya **PPN wajib sebesar 12%**.
+* **Level 5 (Driver Workflow):** Sistem pelacakan kurir untuk mengubah status pengantaran hingga pesanan selesai diterima.
+* **Level 6 & 7 (Admin Dashboard & SLA Overdue):** Dasbor omset finansial real-time yang dilengkapi tombol akselerasi waktu simulasi SLA Overdue (*Auto-Refund* otomatis jika pengiriman hangus).
