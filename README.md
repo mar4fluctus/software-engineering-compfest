@@ -1,7 +1,8 @@
 # software-engineering-compfest
 # SEAPEDIA - Technical Challenge COMPFEST
 
-SEAPEDIA adalah sebuah platform simulasi e-commerce multi-role terintegrasi yang dirancang untuk memenuhi kriteria penilaian *Technical Challenge*. Aplikasi ini dibangun menggunakan arsitektur front-end modern yang responsif dan memanfaatkan penanganan data berbasis state untuk mensimulasikan alur bisnis e-commerce yang kompleks secara real-time.
+SEAPEDIA adalah sebuah platform simulasi e-commerce multi-role terintegrasi yang dirancang untuk memenuhi kriteria penilaian *Technical Challenge*. Aplikasi ini dibangun menggunakan arsitektur front-end modern yang responsif dan memanfaatkan penanganan data berbasis state untuk mensimulasikan alur bisnis e-commerce yang kompleks secara real-time. 
+(Aplikasi ini menggunakan pendekatan arsitektur Front-End murni dengan LocalStorage sebagai penanganan state data terintegrasi antar-role, sehingga tidak memerlukan REST API eksternal terpisah)
 
 ## 🔗 Live Demo
 Aplikasi ini telah dideploy secara publik dan dapat diuji coba secara langsung melalui tautan berikut:
