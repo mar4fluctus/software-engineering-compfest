@@ -5,7 +5,7 @@ SEAPEDIA adalah sebuah platform simulasi e-commerce multi-role terintegrasi yang
 
 ## 🔗 Live Demo
 Aplikasi ini telah dideploy secara publik dan dapat diuji coba secara langsung melalui tautan berikut:
-👉 https://github.com/mar4fluctus/software-engineering-compfest.git 
+👉 https://mar4fluctus.github.io/software-engineering-compfest/
 
 ---
 
